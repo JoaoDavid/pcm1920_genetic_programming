@@ -1,0 +1,26 @@
+Ex01 Embarrassingly Parallel Programming
+========================================
+
+1. Multiplying matrices
+--------------------------------
+
+Write a program that receives two matrices of compatible sizes ([MxN] and [NxO]) and returns a new matrix resulting from the multiplication of the other two.  
+
+- Write a sequential version of the program.
+- Write a parallel version of the program using a fixed number of threads
+- Find the ideal chunk size for your machine
+
+
+
+The solution that was implemented was basaed on dividing M per number of threads, lets say we have A[4*2] and B[2*7],
+and we choose to use 4 threads, each thread exclusively looks to one row of A, and reads all the values of B in order to
+calculate the value of the multiplication
+But in this case, A and B are very small matrices, using parallel computation won't be very efficient, because it will waste
+the majority of the time on creating each thread, the sequential version on this case will run much faster
+But lets say we increase the sizes of this matrices to A[1000*10000] and B[10000*1000], because they have such a big size,
+it's worth using parallel computation, it's more efficient dividing the work per thread
+On my machine (i5 4690k (4cores,4threads,no hyperthreading), 8GB DDR3 RAM), the sequential run took 92904689600 Nanoseconds,
+while the parallel run using 16 threads took 30882998900 Nanoseconds, that's one third of the time
+As the size of the matrices increase, the more efficient parallel computing becomes
+On a second run, the sequential run took 83443891500 Nanoseconds,
+and the parallel run using 4 threads took 25803512900 Nanoseconds, again, the parallel computation wins
