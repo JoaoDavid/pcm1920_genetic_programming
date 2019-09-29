@@ -47,7 +47,7 @@ public class EstimateIntegral {
 	}
 	
 	public static double parallelComputation(){
-		int NTHREADS = 4;
+		int NTHREADS = 16;
 
 		Thread[] threads = new Thread[NTHREADS];
 		double[] sum = new double[NTHREADS];
