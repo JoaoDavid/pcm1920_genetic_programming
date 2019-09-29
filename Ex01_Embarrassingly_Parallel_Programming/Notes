@@ -12,15 +12,68 @@ Write a program that receives two matrices of compatible sizes ([MxN] and [NxO])
 
 
 
-The solution that was implemented was basaed on dividing M per number of threads, lets say we have A[4*2] and B[2*7],
+The solution that was implemented was based on dividing M per number of threads, lets say we have A[4*2] and B[2*7],
 and we choose to use 4 threads, each thread exclusively looks to one row of A, and reads all the values of B in order to
 calculate the value of the multiplication
 But in this case, A and B are very small matrices, using parallel computation won't be very efficient, because it will waste
 the majority of the time on creating each thread, the sequential version on this case will run much faster
 But lets say we increase the sizes of this matrices to A[1000*10000] and B[10000*1000], because they have such a big size,
 it's worth using parallel computation, it's more efficient dividing the work per thread
-On my machine (i5 4690k (4cores,4threads,no hyperthreading), 8GB DDR3 RAM), the sequential run took 92904689600 Nanoseconds,
+On my machine (i5 4690k (4cores,4threads,no Hyper-Threading), 8GB DDR3 RAM), the sequential run took 92904689600 Nanoseconds,
 while the parallel run using 16 threads took 30882998900 Nanoseconds, that's one third of the time
 As the size of the matrices increase, the more efficient parallel computing becomes
 On a second run, the sequential run took 83443891500 Nanoseconds,
 and the parallel run using 4 threads took 25803512900 Nanoseconds, again, the parallel computation wins
+
+
+2. Gathering trapezoids together
+--------------------------------
+
+Write a program that estimates the integral of a given function f, using the trapezoid rule.
+
+Your function should receive:
+
+1. The function (You can use f x = x * (x-1), but it should work for any function)
+LOWER_BOUND = 0.0;
+UPPER_BOUND = 100000.0;
+RESOLUTION = 10e-7;
+
+The solution for the parallel computation was dividing the upper bound per number of threads, so that each thread calculates
+a similar interval (the solution implemented only considers the lower bound being 0).
+The sequential run took 260347605100 Nanoseconds and the result was 3.333299631413262E14
+and the parallel run(4 threads) took 78282087100 Nanoseconds and the result was 3.3332996314283206E14,
+3.333299631413262E14
+3.333299631413262E14
+sequentialComputation : 251096989400
+----------------------
+3.3332996314294475E14
+parallelComputation : 69294073600
+----------------------
+
+Then the number of threads was changed to 16 and the results are as follows
+3.333299631413262E14
+sequentialComputation : 263668678800
+----------------------
+3.333299631429305E14
+parallelComputation :    74270654800
+----------------------
+
+
+With a number of threads of 8 and the results are as follows
+3.333299631413262E14
+sequentialComputation : 255232976300
+----------------------
+3.3332996314283206E14
+parallelComputation : 70234504200
+----------------------
+
+With a number of threads of 2 and the results are as follows
+3.3332996314138725E14
+parallelComputation : 126645152600
+----------------------
+
+We see that increasing the number of threads past the maximum number of threads available in the machine does not improve the speed
+When using only 2 threads we still see a significant improvement over using the sequential version, but is not nearly as good
+compared to using the full threads available in the CPU
+
+

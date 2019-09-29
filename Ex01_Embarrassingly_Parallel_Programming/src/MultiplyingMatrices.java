@@ -62,7 +62,7 @@ public class MultiplyingMatrices {
 		int[][] mC = new int [M][O];
 
 		
-		int NTHREADS = 16;
+		int NTHREADS = 4;
 
 		Thread[] threads = new Thread[NTHREADS];
 
