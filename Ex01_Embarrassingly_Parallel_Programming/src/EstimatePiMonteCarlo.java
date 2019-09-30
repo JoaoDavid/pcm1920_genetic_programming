@@ -43,15 +43,16 @@ public class EstimatePiMonteCarlo {
 		int NTHREADS = 8;
 
 		Thread[] threads = new Thread[NTHREADS];
-		double[] sum = new double[NTHREADS];
+		int[] sum = new int[NTHREADS];
 		int res = 0;
 
 
 		for (int tid=0; tid < NTHREADS; tid++ ) {
 			final int tidInside = tid;
 			Runnable r = () -> {
-				int startIndex = tidInside * THROWS / NTHREADS;
-				int endIndex = (tidInside + 1) * THROWS / NTHREADS ;				
+				int startIndex = tidInside * (THROWS / NTHREADS);
+				int endIndex = (tidInside + 1) * (THROWS / NTHREADS) ;
+				//System.out.println(tidInside + " " + startIndex + " " + endIndex);
 				Random random = new Random();
 				for(int i= startIndex; i < endIndex; i++) {
 					if(pointInside((random.nextDouble()*2) - 1, (random.nextDouble()*2) - 1)) {
