@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.RecursiveTask;
 
-public class QuickSort extends RecursiveTask<List<Integer>> {
+public class QuickSort<E extends Comparable<E>> extends RecursiveTask<List<E>> {
 	
 	/**
 	 * 
@@ -23,43 +23,43 @@ public class QuickSort extends RecursiveTask<List<Integer>> {
 		list.add(0);
 		
 
-		QuickSort f = new QuickSort(list);
+		QuickSort<Integer> f = new QuickSort(list);
 		System.out.println("Sorted = " + f.compute());
 	}
 
 	
-	private List<Integer> array;
+	private List<E> array;
 	
-	public QuickSort(List<Integer> array) {
+	public QuickSort(List<E> array) {
 		this.array = array;
 	}
 
 
 	@Override
-	protected List<Integer> compute() {
+	protected List<E> compute() {
 		if (array.size() <= 1) {
 			return array;
 		}
-		int pivot = array.remove(0);
-		List<Integer> less = new ArrayList<Integer>();
-		List<Integer> higher = new ArrayList<Integer>();
-		for (Integer i : array) {
-			if (i <= pivot) {
+		E pivot = array.remove(0);
+		List<E> less = new ArrayList<E>();
+		List<E> higher = new ArrayList<E>();
+		for (E i : array) {
+			if (i.compareTo(pivot) <= 0) {
 				less.add(i);
 			}else {
 				higher.add(i);
 			}
 		}
 	
-		QuickSort qs1 = new QuickSort(less);
-		QuickSort qs2 = new QuickSort(higher);
+		QuickSort<E> qs1 = new QuickSort(less);
+		QuickSort<E> qs2 = new QuickSort(higher);
 		
 		qs1.fork();
 		qs2.fork();
 
-		List<Integer> newList = new ArrayList<Integer>((List<Integer>) qs1.join());
+		List<E> newList = new ArrayList<E>((List<E>) qs1.join());
 		newList.add(pivot);
-		newList.addAll((List<Integer>) qs2.join());
+		newList.addAll((List<E>) qs2.join());
 		return newList;
 		
 	}
