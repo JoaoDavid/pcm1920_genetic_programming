@@ -4,10 +4,10 @@ import java.util.Random;
 public class Individual {
 	
 	// This is the definition of the problem
-	public static final int GENE_SIZE = 1000; // Number of possible items
-	public static int[] VALUES = new int[GENE_SIZE];
-	public static int[] WEIGHTS = new int[GENE_SIZE];
-	public static int WEIGHT_LIMIT = 300; 
+	private static final int GENE_SIZE = 1000; // Number of possible items
+	private static int[] VALUES = new int[GENE_SIZE];
+	private static int[] WEIGHTS = new int[GENE_SIZE];
+	private static int WEIGHT_LIMIT = 300; 
 	
 	
 	static {
@@ -25,8 +25,12 @@ public class Individual {
 	 *  The goal is to find the items that maximize the total value with
 	 *  surpassing the weight limit.
 	 */
-	public boolean[] selectedItems = new boolean[GENE_SIZE];
-	public int fitness;
+	private boolean[] selectedItems = new boolean[GENE_SIZE];
+	private int fitness;
+
+	public int getFitness() {
+		return fitness;
+	}
 
 	public static Individual createRandom() {
 		Random r = new Random();

@@ -35,15 +35,15 @@ public class KnapsackGA {
 			Arrays.sort(population, new Comparator<Individual>() {
 				@Override
 				public int compare(Individual o1, Individual o2) {
-					if (o1.fitness > o2.fitness) return -1;
-					if (o1.fitness < o2.fitness) return 1;
+					if (o1.getFitness() > o2.getFitness()) return -1;
+					if (o1.getFitness() < o2.getFitness()) return 1;
 					return 0;
 				}
 			});
 			
 			// Debug
 			
-			System.out.println("Best fitness at " + generation + " is " + population[0].fitness);
+			System.out.println("Best fitness at " + generation + " is " + population[0].getFitness());
 			
 			// Step3 - Find parents to mate (cross-over)
 			Individual[] newPopulation = new Individual[POP_SIZE];
