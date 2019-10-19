@@ -3,8 +3,9 @@ package knapsack;
 public class Main {
 	public static void main(String[] args) {
 		KnapsackGA ga = new KnapsackGA();
-		long time = System.nanoTime();
+		long start = System.nanoTime();
 		ga.run();
-		System.out.println(System.nanoTime() - time + "nano sec");
+		long end = System.nanoTime();
+		System.out.println(end - start + " nano sec | " + (end - start) * 1E-9);
 	}
 }
