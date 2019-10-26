@@ -1,13 +1,13 @@
 
 public class Integrate {
 	
-	static final double errorTolerance = 10e-7;
+	static final double errorTolerance = 1.0e-4;
 	static double start = 0;
-    static double end = 1;
+    static double end = 100;
     
 	// the function to integrate
     static double computeFunction(double x)  {
-        return x * (x-1);
+    	return (x * x + 1.0) * x;
     }
 	public static void main(String[] args) throws Exception {
 

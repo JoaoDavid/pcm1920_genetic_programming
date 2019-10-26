@@ -4,7 +4,7 @@ import java.util.Comparator;
 import java.util.Random;
 
 public class KnapsackGA {
-	private static final int N_GENERATIONS = 500;
+	private static final int N_GENERATIONS = 20;//500;
 	private static final int POP_SIZE = 100000;
 	private static final double PROB_MUTATION = 0.5;
 	

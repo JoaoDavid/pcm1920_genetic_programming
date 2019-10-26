@@ -1,8 +1,9 @@
-package sort;
+package quicksort;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
+import java.util.concurrent.ForkJoinTask;
 import java.util.concurrent.RecursiveTask;
 
 public class QuickSort<E extends Comparable<E>> extends RecursiveTask<List<E>> {
@@ -17,7 +18,7 @@ public class QuickSort<E extends Comparable<E>> extends RecursiveTask<List<E>> {
 		Random gen = new Random();
 		List<Integer> listPar = new ArrayList<Integer>();
 		List<Integer> listSeq = new ArrayList<Integer>();
-		for(int i = 0; i < 5000000; i++) {
+		for(int i = 0; i < 50000000; i++) {
 			Integer integer = gen.nextInt(50000)-50000;
 			listPar.add(integer);
 			listSeq.add(integer);
@@ -57,6 +58,9 @@ public class QuickSort<E extends Comparable<E>> extends RecursiveTask<List<E>> {
 
 	@Override
 	protected List<E> compute() {
+		if (ForkJoinTask.getSurplusQueuedTaskCount() > 3) {
+			return quicksort(list);
+		}
 		/*if (list.size() <= 1) {
 			return list;
 		}*/

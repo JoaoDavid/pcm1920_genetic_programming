@@ -9,12 +9,12 @@ Write a program that estimates the integral of a given function f, using the tra
 public class EstimateIntegral {
 	
 	static final double LOWER_BOUND = 0.0;
-	static final double UPPER_BOUND = 100000.0;
-	static final double RESOLUTION = 10e-7;
+	static final double UPPER_BOUND = 100.0;
+	static final double RESOLUTION = 1.0e-4;
 
 	public static void main(String[] args) {
 		long tSeq = System.nanoTime();
-		//System.out.println(sequentialComputation());
+		System.out.println(sequentialComputation());
 		System.out.println("sequentialComputation : " + (System.nanoTime() - tSeq));
 		System.out.println("----------------------");
 		
@@ -27,7 +27,7 @@ public class EstimateIntegral {
 	}
 	
 	public static double function (double x) {
-		return x * (x-1);
+		return (x * x + 1.0) * x;
 	}
 	
 	public static double sequentialComputation(){
