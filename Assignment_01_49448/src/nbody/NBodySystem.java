@@ -36,29 +36,28 @@ public class NBodySystem {
 		for (int i = 0; i < bodies.length; ++i) {
 			NBody iBody = bodies[i];
 			for (int j = i + 1; j < bodies.length; ++j) {
-				final NBody body = bodies[j];
-				double dx = iBody.x - body.x;
-				double dy = iBody.y - body.y;
-				double dz = iBody.z - body.z;
+				//reading only
+				final NBody otherBody = bodies[j];
+				double dx = iBody.x - otherBody.x;
+				double dy = iBody.y - otherBody.y;
+				double dz = iBody.z - otherBody.z;
 
 				double dSquared = dx * dx + dy * dy + dz * dz;
 				double distance = Math.sqrt(dSquared);
 				double mag = dt / (dSquared * distance);
 
-				iBody.vx -= dx * body.mass * mag;
-				iBody.vy -= dy * body.mass * mag;
-				iBody.vz -= dz * body.mass * mag;
+				//read and writing
+				iBody.vx -= dx * otherBody.mass * mag;
+				iBody.vy -= dy * otherBody.mass * mag;
+				iBody.vz -= dz * otherBody.mass * mag;
 
-				body.vx += dx * iBody.mass * mag;
-				body.vy += dy * iBody.mass * mag;
-				body.vz += dz * iBody.mass * mag;
+				otherBody.vx += dx * iBody.mass * mag;
+				otherBody.vy += dy * iBody.mass * mag;
+				otherBody.vz += dz * iBody.mass * mag;
 			}
-		}
-
-		for (NBody body : bodies) {
-			body.x += dt * body.vx;
-			body.y += dt * body.vy;
-			body.z += dt * body.vz;
+			iBody.x += dt * iBody.vx;
+			iBody.y += dt * iBody.vy;
+			iBody.z += dt * iBody.vz;
 		}
 	}
 
