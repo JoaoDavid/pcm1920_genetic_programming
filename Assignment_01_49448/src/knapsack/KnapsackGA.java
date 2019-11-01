@@ -3,7 +3,6 @@ import java.util.Arrays;
 import java.util.Comparator;
 import java.util.concurrent.ThreadLocalRandom;
 import java.util.stream.IntStream;
-import java.util.stream.Stream;
 
 public class KnapsackGA {
 	private static final int N_GENERATIONS = 500;
@@ -37,12 +36,12 @@ public class KnapsackGA {
 					return 0;
 				}});
 
-			// Debug			
-			Individual best = population[0];
-			System.out.println("Best fitness at " + generation + " is " + best.getFitness());
+			// Debug
+			//population[0] is the individual with best fitness
+			System.out.println("Best fitness at " + generation + " is " + population[0].getFitness());
 			
 			Individual[] newPopulation = new Individual[POP_SIZE];
-			newPopulation[0] = best;
+			newPopulation[0] = population[0];
 			IntStream.range(1, POP_SIZE).parallel().forEach(i -> {				
 				// Step3 - Find parents to mate (cross-over)
 				// The first elements in the population have higher probability of being selected
@@ -56,7 +55,7 @@ public class KnapsackGA {
 				}
 			});
 
-			population = Stream.concat(Stream.of(best),Stream.of(newPopulation)).toArray(Individual[]::new);
+			population = newPopulation;
 		}
 	}
 
