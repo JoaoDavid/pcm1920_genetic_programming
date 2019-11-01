@@ -1,9 +1,6 @@
 package nbody;
 
 import java.util.Random;
-import java.util.concurrent.BrokenBarrierException;
-import java.util.concurrent.CyclicBarrier;
-import java.util.concurrent.locks.ReentrantReadWriteLock;
 
 public class NBodySystem {
 
@@ -17,10 +14,6 @@ public class NBodySystem {
 	static final double SOLAR_MASS = 4 * PI * PI;
 
 	protected NBody[] bodies;
-	private final int NTHREADS = Runtime.getRuntime().availableProcessors();
-	private final ReentrantReadWriteLock rwl = new ReentrantReadWriteLock();
-	private final CyclicBarrier barrier = new CyclicBarrier(NTHREADS);
-	private volatile int i;
 
 	public NBodySystem(int n, long seed) {
 		Random random = new Random(seed);
@@ -39,109 +32,68 @@ public class NBodySystem {
 	}
 
 	public void advance(double dt) {
-
-		/*for (int i = 0; i < bodies.length; ++i) {
-			NBody iBody = bodies[i];*/
-
-
+		int NTHREADS = Runtime.getRuntime().availableProcessors();
 		Thread[] ts = new Thread[NTHREADS];
-		for (int j=0; j<NTHREADS; j++) {
-			final int tid = j;
-			final int iVar = i + 1;
-			ts[j] = new Thread( () -> {
-				while(i < bodies.length) {
-					/*try {
-						barrier.await();
-					} catch (InterruptedException | BrokenBarrierException e) {
-						// TODO Auto-generated catch block
-						e.printStackTrace();
-					}	*/					
-					int tidLocal = tid;
-					int iterations = bodies.length - (i + 1);
-					int startIndex = (tid * iterations / NTHREADS) + iVar;
-					int endIndex = ((tid+1) * iterations / NTHREADS) + iVar;
-					//					
-					for (int k = startIndex; k < endIndex; ++k) {
-						//reading only
-						//rwl.readLock().lock();
-						//System.out.println("IM READING "+tid);
-						NBody otherBody = bodies[k];
-						double dx = bodies[i].x - otherBody.x;
-						double dy = bodies[i].y - otherBody.y;
-						double dz = bodies[i].z - otherBody.z;
+		int ITERATIONS = bodies.length;
+		for (int i=0; i<NTHREADS; i++) {
+			final int tid = i;
+			ts[i] = new Thread( () -> {
+				int startIndex = tid * ITERATIONS / NTHREADS ;
+				int endIndex = (tid+1) * ITERATIONS / NTHREADS;
+
+				for (int j = startIndex; j < endIndex; ++j) {
+					NBody iBody = bodies[j];
+					for (int k = j + 1; k < bodies.length; ++k) {
+						final NBody otherBody = bodies[k];
+						double dx = iBody.x - otherBody.x;
+						double dy = iBody.y - otherBody.y;
+						double dz = iBody.z - otherBody.z;
 
 						double dSquared = dx * dx + dy * dy + dz * dz;
 						double distance = Math.sqrt(dSquared);
 						double mag = dt / (dSquared * distance);
-						/*try {
-								barrier.await();
-							} catch (InterruptedException | BrokenBarrierException e) {
-								// TODO Auto-generated catch block
-								e.printStackTrace();
-							}*/
-						/*rwl.readLock().unlock();
-						rwl.writeLock().lock();*/
-						//System.out.println("IM WRITING "+tid);
-						//read and writing
-						bodies[i].vx -= dx * otherBody.mass * mag;
-						bodies[i].vy -= dy * otherBody.mass * mag;
-						bodies[i].vz -= dz * otherBody.mass * mag;
 
-						otherBody.vx += dx * bodies[i].mass * mag;
-						otherBody.vy += dy * bodies[i].mass * mag;
-						otherBody.vz += dz * bodies[i].mass * mag;
-						//rwl.writeLock().unlock();
+
+						synchronized (iBody){
+							iBody.vx -= dx * otherBody.mass * mag;
+							iBody.vy -= dy * otherBody.mass * mag;
+							iBody.vz -= dz * otherBody.mass * mag;
+						}
+
+						synchronized (otherBody){
+							otherBody.vx += dx * iBody.mass * mag;
+							otherBody.vy += dy * iBody.mass * mag;
+							otherBody.vz += dz * iBody.mass * mag;
+						}
+
 					}
-					if(tidLocal == 0) {//thread with id 0 has special controls
-						//System.out.println(i);
-						bodies[i].x += dt * bodies[i].vx;
-						bodies[i].y += dt * bodies[i].vy;
-						bodies[i].z += dt * bodies[i].vz;
-						i++;
-					}
-				}
-
-				//
-
+				}				
 			});
-			ts[j].start();
+			ts[i].start();
 		}
 
-		for (int j=0; j<NTHREADS; j++) {
+		for (int i=0; i<NTHREADS; i++) {
 			try {
-				ts[j].join();
+				ts[i].join();
 			} catch (InterruptedException e) {
 				// Class code : no exceptions
 			}
 		}
 
+		/*IntStream.range(0, bodies.length).parallel().forEach(i -> {				
+			bodies[i].x += dt * bodies[i].vx;
+			bodies[i].y += dt * bodies[i].vy;
+			bodies[i].z += dt * bodies[i].vz;
+		});*/
 
-
-		/*for (int j = i + 1; j < bodies.length; ++j) {
-				//reading only
-				final NBody otherBody = bodies[j];
-				double dx = iBody.x - otherBody.x;
-				double dy = iBody.y - otherBody.y;
-				double dz = iBody.z - otherBody.z;
-
-				double dSquared = dx * dx + dy * dy + dz * dz;
-				double distance = Math.sqrt(dSquared);
-				double mag = dt / (dSquared * distance);
-
-				//read and writing
-				iBody.vx -= dx * otherBody.mass * mag;
-				iBody.vy -= dy * otherBody.mass * mag;
-				iBody.vz -= dz * otherBody.mass * mag;
-
-				otherBody.vx += dx * iBody.mass * mag;
-				otherBody.vy += dy * iBody.mass * mag;
-				otherBody.vz += dz * iBody.mass * mag;
-			}*/
-		//iBody.x += dt * iBody.vx;
-		//iBody.y += dt * iBody.vy;
-		//iBody.z += dt * iBody.vz;
-		//}
+		for (NBody body : bodies) {
+			body.x += dt * body.vx;
+			body.y += dt * body.vy;
+			body.z += dt * body.vz;
+		}
 	}
+
+
 
 	public double energy() {
 		double dx, dy, dz, distance;
