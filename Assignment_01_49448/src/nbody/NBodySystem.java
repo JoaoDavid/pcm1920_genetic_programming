@@ -1,6 +1,7 @@
 package nbody;
 
 import java.util.Random;
+import java.util.concurrent.ForkJoinPool;
 
 public class NBodySystem {
 
@@ -32,7 +33,7 @@ public class NBodySystem {
 	}
 
 	public void advance(double dt) {
-		int NTHREADS = Runtime.getRuntime().availableProcessors();
+		/*int NTHREADS = Runtime.getRuntime().availableProcessors();
 		Thread[] ts = new Thread[NTHREADS];
 		int ITERATIONS = bodies.length;
 		for (int i=0; i<NTHREADS; i++) {
@@ -78,14 +79,21 @@ public class NBodySystem {
 			} catch (InterruptedException e) {
 				// Class code : no exceptions
 			}
-		}
+		}*/
 
 		/*IntStream.range(0, bodies.length).parallel().forEach(i -> {				
 			bodies[i].x += dt * bodies[i].vx;
 			bodies[i].y += dt * bodies[i].vy;
 			bodies[i].z += dt * bodies[i].vz;
 		});*/
-
+		
+		NBodyAdvanceFj bodyAdvance = new NBodyAdvanceFj(bodies, 0, bodies.length, dt);
+		bodyAdvance.compute();
+		/*ForkJoinPool pool = new ForkJoinPool();
+		pool.execute(bodyAdvance);
+		bodyAdvance.join();
+		System.out.println(pool.toString());*/
+		
 		for (NBody body : bodies) {
 			body.x += dt * body.vx;
 			body.y += dt * body.vy;
