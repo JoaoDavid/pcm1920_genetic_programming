@@ -15,6 +15,7 @@ public class NBodySystem {
 	static final double SOLAR_MASS = 4 * PI * PI;
 
 	protected NBody[] bodies;
+	private ForkJoinPool pool = new ForkJoinPool();
 
 	public NBodySystem(int n, long seed) {
 		Random random = new Random(seed);
@@ -88,11 +89,11 @@ public class NBodySystem {
 		});*/
 		
 		NBodyAdvanceFj bodyAdvance = new NBodyAdvanceFj(bodies, 0, bodies.length, dt);
-		bodyAdvance.compute();
-		/*ForkJoinPool pool = new ForkJoinPool();
+		//bodyAdvance.compute();
+		//ForkJoinPool pool = new ForkJoinPool();
 		pool.execute(bodyAdvance);
 		bodyAdvance.join();
-		System.out.println(pool.toString());*/
+		System.out.println(pool.toString());
 		
 		for (NBody body : bodies) {
 			body.x += dt * body.vx;
