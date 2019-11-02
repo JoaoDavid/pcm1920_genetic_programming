@@ -99,12 +99,15 @@ public class NBodySystem {
 			bodies[i].vx -= iBodyAarr[i][0];
 			bodies[i].vy -= iBodyAarr[i][1];
 			bodies[i].vz -= iBodyAarr[i][2];
+			bodies[i].x += dt * bodies[i].vx;
+			bodies[i].y += dt * bodies[i].vy;
+			bodies[i].z += dt * bodies[i].vz;
 		}
-		for (NBody body : bodies) {
+		/*for (NBody body : bodies) {
 			body.x += dt * body.vx;
 			body.y += dt * body.vy;
 			body.z += dt * body.vz;
-		}
+		}*/
 	}
 
 
