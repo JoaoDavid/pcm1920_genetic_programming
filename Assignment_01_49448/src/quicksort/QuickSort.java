@@ -18,10 +18,10 @@ public class QuickSort<E extends Comparable<E>> extends RecursiveTask<List<E>> {
 		Random gen = new Random();
 		List<Integer> listPar = new ArrayList<Integer>();
 		List<Integer> listSeq = new ArrayList<Integer>();
-		for(int i = 0; i < 50000000; i++) {
-			Integer integer = gen.nextInt(50000)-50000;
+		for(int i = 0; i < QuickSortSeq.ARR_SIZE; i++) {
+			Integer integer = gen.nextInt();
 			listPar.add(integer);
-			listSeq.add(integer);
+			//listSeq.add(integer);
 		}
 		/*listA.add(2);
 		listA.add(3);

@@ -34,7 +34,8 @@ public class NBodySystem {
 	}
 
 	public void advance(double dt) {
-		/*int NTHREADS = Runtime.getRuntime().availableProcessors();
+		double[][] iBodyAarr = new double[bodies.length][3];
+		int NTHREADS = Runtime.getRuntime().availableProcessors();
 		Thread[] ts = new Thread[NTHREADS];
 		int ITERATIONS = bodies.length;
 		for (int i=0; i<NTHREADS; i++) {
@@ -56,11 +57,14 @@ public class NBodySystem {
 						double mag = dt / (dSquared * distance);
 
 
-						synchronized (iBody){
+						/*synchronized (iBody){
 							iBody.vx -= dx * otherBody.mass * mag;
 							iBody.vy -= dy * otherBody.mass * mag;
 							iBody.vz -= dz * otherBody.mass * mag;
-						}
+						}*/
+						iBodyAarr[j][0] += dx * otherBody.mass * mag;
+						iBodyAarr[j][1] += dy * otherBody.mass * mag;
+						iBodyAarr[j][2] += dz * otherBody.mass * mag;
 
 						synchronized (otherBody){
 							otherBody.vx += dx * iBody.mass * mag;
@@ -80,21 +84,8 @@ public class NBodySystem {
 			} catch (InterruptedException e) {
 				// Class code : no exceptions
 			}
-		}*/
-
-		/*IntStream.range(0, bodies.length).parallel().forEach(i -> {				
-			bodies[i].x += dt * bodies[i].vx;
-			bodies[i].y += dt * bodies[i].vy;
-			bodies[i].z += dt * bodies[i].vz;
-		});*/
-		double[][] iBodyAarr = new double[bodies.length][3];
-		NBodyAdvanceFj bodyAdvance = new NBodyAdvanceFj(bodies, 0, bodies.length, dt, iBodyAarr);
-		bodyAdvance.compute();
-		//pool.execute(bodyAdvance);
-		
-		//System.out.println("inForkJoinPool " + bodyAdvance.inForkJoinPool());
-		//System.out.println(pool.toString());
-		//bodyAdvance.join();
+		}
+		//
 		for (int i = 0; i < bodies.length; i++) {
 			bodies[i].vx -= iBodyAarr[i][0];
 			bodies[i].vy -= iBodyAarr[i][1];
@@ -103,11 +94,6 @@ public class NBodySystem {
 			bodies[i].y += dt * bodies[i].vy;
 			bodies[i].z += dt * bodies[i].vz;
 		}
-		/*for (NBody body : bodies) {
-			body.x += dt * body.vx;
-			body.y += dt * body.vy;
-			body.z += dt * body.vz;
-		}*/
 	}
 
 
