@@ -87,14 +87,19 @@ public class NBodySystem {
 			bodies[i].y += dt * bodies[i].vy;
 			bodies[i].z += dt * bodies[i].vz;
 		});*/
+		double[][] iBodyAarr = new double[bodies.length][3];
+		NBodyAdvanceFj bodyAdvance = new NBodyAdvanceFj(bodies, 0, bodies.length, dt, iBodyAarr);
+		bodyAdvance.compute();
+		//pool.execute(bodyAdvance);
 		
-		NBodyAdvanceFj bodyAdvance = new NBodyAdvanceFj(bodies, 0, bodies.length, dt);
-		//bodyAdvance.compute();
-		//ForkJoinPool pool = new ForkJoinPool();
-		pool.execute(bodyAdvance);
-		bodyAdvance.join();
-		System.out.println(pool.toString());
-		
+		//System.out.println("inForkJoinPool " + bodyAdvance.inForkJoinPool());
+		//System.out.println(pool.toString());
+		//bodyAdvance.join();
+		for (int i = 0; i < bodies.length; i++) {
+			bodies[i].vx -= iBodyAarr[i][0];
+			bodies[i].vy -= iBodyAarr[i][1];
+			bodies[i].vz -= iBodyAarr[i][2];
+		}
 		for (NBody body : bodies) {
 			body.x += dt * body.vx;
 			body.y += dt * body.vy;
