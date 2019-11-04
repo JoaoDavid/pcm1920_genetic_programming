@@ -33,8 +33,9 @@ public class NBodyAdvanceFj extends RecursiveAction{
 
 
 		if (ForkJoinTask.getSurplusQueuedTaskCount() > SURPLUS_THRESHOLD || endIndex - startIndex <= 8) {
+			//double[][] otherBodyAarr = new double[bodies.length][3];
 			for (int j = startIndex; j < endIndex; ++j) {
-				NBody iBody = bodies[j];
+				NBody iBody = bodies[j];				
 				for (int k = j + 1; k < bodies.length; ++k) {
 					final NBody otherBody = bodies[k];
 					double dx = iBody.x - otherBody.x;
@@ -61,9 +62,22 @@ public class NBodyAdvanceFj extends RecursiveAction{
 						otherBody.vy += dy * iBody.mass * mag;
 						otherBody.vz += dz * iBody.mass * mag;
 					}
+					/*otherBodyAarr[k][0] += dx * iBody.mass * mag;
+					otherBodyAarr[k][1] += dy * iBody.mass * mag;
+					otherBodyAarr[k][2] += dz * iBody.mass * mag;*/
 
 				}
+
+
 			}
+			/*for (int i = 0; i < bodies.length; i++) {
+				NBody iBody = bodies[i];
+				synchronized (iBody){	
+					iBody.vx += otherBodyAarr[i][0];
+					iBody.vy += otherBodyAarr[i][1];
+					iBody.vz += otherBodyAarr[i][2];
+				}
+			}*/
 
 
 		} else {
