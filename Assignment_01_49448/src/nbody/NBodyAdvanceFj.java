@@ -57,11 +57,11 @@ public class NBodyAdvanceFj extends RecursiveAction{
 					iBodyAarr[j][1] += dy * otherBody.mass * mag;
 					iBodyAarr[j][2] += dz * otherBody.mass * mag;
 
-					synchronized (otherBody){
+					//synchronized (otherBody){
 						otherBody.vx += dx * iBody.mass * mag;
 						otherBody.vy += dy * iBody.mass * mag;
 						otherBody.vz += dz * iBody.mass * mag;
-					}
+					//}
 					/*otherBodyAarr[k][0] += dx * iBody.mass * mag;
 					otherBodyAarr[k][1] += dy * iBody.mass * mag;
 					otherBodyAarr[k][2] += dz * iBody.mass * mag;*/
