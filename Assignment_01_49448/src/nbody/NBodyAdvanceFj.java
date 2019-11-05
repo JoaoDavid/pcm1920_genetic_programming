@@ -82,9 +82,10 @@ public class NBodyAdvanceFj extends RecursiveAction{
 
 		} else {
 			int iteration = endIndex - startIndex;
-			int middle = iteration / 2;
-			NBodyAdvanceFj bodyAdvance1 = new NBodyAdvanceFj(bodies, startIndex, startIndex + middle, dt, iBodyAarr);
-			NBodyAdvanceFj bodyAdvance2 = new NBodyAdvanceFj(bodies, startIndex+middle, endIndex, dt, iBodyAarr);
+			int positions = (iteration * bodies.length) - ((iteration*iteration)-1);
+			int division = iteration / 4;
+			NBodyAdvanceFj bodyAdvance1 = new NBodyAdvanceFj(bodies, startIndex, startIndex + division, dt, iBodyAarr);
+			NBodyAdvanceFj bodyAdvance2 = new NBodyAdvanceFj(bodies, startIndex+division, endIndex, dt, iBodyAarr);
 
 			bodyAdvance1.fork();
 			bodyAdvance2.fork();
