@@ -35,55 +35,10 @@ public class NBodySystem {
 		bodies[0].offsetMomentum(px, py, pz);
 	}
 
-	public void advance(double dt) {
-		/*int NTHREADS = Runtime.getRuntime().availableProcessors();
-		Thread[] ts = new Thread[NTHREADS];
-		int ITERATIONS = bodies.length;
-		for (int i=0; i<NTHREADS; i++) {
-			final int tid = i;
-			ts[i] = new Thread( () -> {
-				int startIndex = tid * ITERATIONS / NTHREADS ;
-				int endIndex = (tid+1) * ITERATIONS / NTHREADS;
-				for (int j = startIndex; j < endIndex; ++j) {
-					NBody iBody = bodies[j];
-					for (int k = j + 1; k < bodies.length; ++k) {
-						final NBody otherBody = bodies[k];
-						double dx = iBody.x - otherBody.x;
-						double dy = iBody.y - otherBody.y;
-						double dz = iBody.z - otherBody.z;
-						double dSquared = dx * dx + dy * dy + dz * dz;
-						double distance = Math.sqrt(dSquared);
-						double mag = dt / (dSquared * distance);
-						synchronized (iBody){
-							iBody.vx -= dx * otherBody.mass * mag;
-							iBody.vy -= dy * otherBody.mass * mag;
-							iBody.vz -= dz * otherBody.mass * mag;
-						}
-						synchronized (otherBody){
-							otherBody.vx += dx * iBody.mass * mag;
-							otherBody.vy += dy * iBody.mass * mag;
-							otherBody.vz += dz * iBody.mass * mag;
-						}
-					}
-				}				
-			});
-			ts[i].start();
-		}
-		for (int i=0; i<NTHREADS; i++) {
-			try {
-				ts[i].join();
-			} catch (InterruptedException e) {
-				// Class code : no exceptions
-			}
-		}*/
-
-		/*IntStream.range(0, bodies.length).parallel().forEach(i -> {				
-			bodies[i].x += dt * bodies[i].vx;
-			bodies[i].y += dt * bodies[i].vy;
-			bodies[i].z += dt * bodies[i].vz;
-		});*/
+	public void advance(double dt) {		
 		double[][] iBodyAarr = new double[bodies.length][3];
-		NBodyAdvanceFj bodyAdvance = new NBodyAdvanceFj(bodies, 0, bodies.length, dt, iBodyAarr);
+		double[][] otherBodyAarr = new double[bodies.length][3];
+		NBodyAdvanceFj bodyAdvance = new NBodyAdvanceFj(bodies, 0, bodies.length, dt, iBodyAarr, otherBodyAarr);
 		bodyAdvance.compute();
 		//pool.execute(bodyAdvance);
 		
@@ -94,6 +49,9 @@ public class NBodySystem {
 			bodies[i].vx -= iBodyAarr[i][0];
 			bodies[i].vy -= iBodyAarr[i][1];
 			bodies[i].vz -= iBodyAarr[i][2];
+			bodies[i].vx += otherBodyAarr[i][0];
+			bodies[i].vy += otherBodyAarr[i][1];
+			bodies[i].vz += otherBodyAarr[i][2];
 			bodies[i].x += dt * bodies[i].vx;
 			bodies[i].y += dt * bodies[i].vy;
 			bodies[i].z += dt * bodies[i].vz;

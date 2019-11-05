@@ -18,24 +18,24 @@ public class NBodyAdvanceFj extends RecursiveAction{
 	private int endIndex;
 	private double dt;
 	private double[][] iBodyAarr;
+	private double[][] otherBodyAarr;
 
-	public NBodyAdvanceFj(NBody[] bodies, int startIndex, int endIndex, double dt, double[][] iBodyAarr) {
+	public NBodyAdvanceFj(NBody[] bodies, int startIndex, int endIndex, double dt, double[][] iBodyAarr, double[][] otherBodyAarr) {
 		this.bodies = bodies;
 		this.startIndex = startIndex;
 		this.endIndex = endIndex;
 		this.dt = dt;
 		this.iBodyAarr = iBodyAarr;
+		this.otherBodyAarr = otherBodyAarr;
 	}
 
 
 	@Override
 	protected void compute() {
-
-
 		if (ForkJoinTask.getSurplusQueuedTaskCount() > SURPLUS_THRESHOLD || endIndex - startIndex <= 8) {
-			//double[][] otherBodyAarr = new double[bodies.length][3];
 			for (int j = startIndex; j < endIndex; ++j) {
-				NBody iBody = bodies[j];				
+				NBody iBody = bodies[j];
+				int iIndex = 0;
 				for (int k = j + 1; k < bodies.length; ++k) {
 					final NBody otherBody = bodies[k];
 					double dx = iBody.x - otherBody.x;
@@ -46,46 +46,55 @@ public class NBodyAdvanceFj extends RecursiveAction{
 					double distance = Math.sqrt(dSquared);
 					double mag = dt / (dSquared * distance);
 
-
-					/*synchronized (iBody){						
-						iBody.vx -= dx * otherBody.mass * mag;
-						iBody.vy -= dy * otherBody.mass * mag;
-						iBody.vz -= dz * otherBody.mass * mag;
-					}*/
-
 					iBodyAarr[j][0] += dx * otherBody.mass * mag;
 					iBodyAarr[j][1] += dy * otherBody.mass * mag;
 					iBodyAarr[j][2] += dz * otherBody.mass * mag;
+					/*
+					iBody.vx -= dx * body.mass * mag;
+					iBody.vy -= dy * body.mass * mag;
+					iBody.vz -= dz * body.mass * mag;
 
-					synchronized (otherBody){
+					body.vx += dx * iBody.mass * mag;
+					body.vy += dy * iBody.mass * mag;
+					body.vz += dz * iBody.mass * mag;
+					 */
+					int otherIndex = bodies.length-1-j;
+					double dx2 = bodies[iIndex].x - bodies[otherIndex].x;
+					double dy2 = bodies[iIndex].y - bodies[otherIndex].y;
+					double dz2 = bodies[iIndex].z - bodies[otherIndex].z;
+
+					double dSquared2 = dx2 * dx2 + dy2 * dy2 + dz2 * dz2;
+					double distance2 = Math.sqrt(dSquared2);
+					double mag2 = dt / (dSquared2 * distance2);
+
+
+
+					otherBodyAarr[otherIndex][0] += dx2 * bodies[iIndex].mass * mag2;
+					otherBodyAarr[otherIndex][1] += dy2 * bodies[iIndex].mass * mag2;
+					otherBodyAarr[otherIndex][2] += dz2 * bodies[iIndex].mass * mag2;
+
+
+					/*synchronized (otherBody){
 						otherBody.vx += dx * iBody.mass * mag;
 						otherBody.vy += dy * iBody.mass * mag;
 						otherBody.vz += dz * iBody.mass * mag;
-					}
-					/*otherBodyAarr[k][0] += dx * iBody.mass * mag;
-					otherBodyAarr[k][1] += dy * iBody.mass * mag;
-					otherBodyAarr[k][2] += dz * iBody.mass * mag;*/
+					}*/
+					iIndex++;
+					/*if(j < 0) {
+						System.out.println(j + " : " + curr);
+					}*/
 
 				}
+
 
 
 			}
-			/*for (int i = 0; i < bodies.length; i++) {
-				NBody iBody = bodies[i];
-				synchronized (iBody){	
-					iBody.vx += otherBodyAarr[i][0];
-					iBody.vy += otherBodyAarr[i][1];
-					iBody.vz += otherBodyAarr[i][2];
-				}
-			}*/
-
-
 		} else {
 			int iteration = endIndex - startIndex;
 			int positions = (iteration * bodies.length) - ((iteration*iteration)-1);
-			int division = iteration / 4;
-			NBodyAdvanceFj bodyAdvance1 = new NBodyAdvanceFj(bodies, startIndex, startIndex + division, dt, iBodyAarr);
-			NBodyAdvanceFj bodyAdvance2 = new NBodyAdvanceFj(bodies, startIndex+division, endIndex, dt, iBodyAarr);
+			int division = iteration / 3;
+			NBodyAdvanceFj bodyAdvance1 = new NBodyAdvanceFj(bodies, startIndex, startIndex + division, dt, iBodyAarr, otherBodyAarr);
+			NBodyAdvanceFj bodyAdvance2 = new NBodyAdvanceFj(bodies, startIndex+division, endIndex, dt, iBodyAarr, otherBodyAarr);
 
 			bodyAdvance1.fork();
 			bodyAdvance2.fork();
