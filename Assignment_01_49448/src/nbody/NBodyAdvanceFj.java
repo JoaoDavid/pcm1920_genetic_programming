@@ -6,11 +6,6 @@ import java.util.concurrent.RecursiveAction;
 @SuppressWarnings("serial")
 public class NBodyAdvanceFj extends RecursiveAction{
 
-	public static void main(String[] args) {
-		// TODO Auto-generated method stub
-
-	}
-
 	private static final int SURPLUS_THRESHOLD = 3;
 
 	private NBody[] bodies;
@@ -49,15 +44,9 @@ public class NBodyAdvanceFj extends RecursiveAction{
 					iBodyAarr[j][0] += dx * otherBody.mass * mag;
 					iBodyAarr[j][1] += dy * otherBody.mass * mag;
 					iBodyAarr[j][2] += dz * otherBody.mass * mag;
-					/*
-					iBody.vx -= dx * body.mass * mag;
-					iBody.vy -= dy * body.mass * mag;
-					iBody.vz -= dz * body.mass * mag;
+					
+					//----------------------
 
-					body.vx += dx * iBody.mass * mag;
-					body.vy += dy * iBody.mass * mag;
-					body.vz += dz * iBody.mass * mag;
-					 */
 					int otherIndex = bodies.length-1-j;
 					double dx2 = bodies[iIndex].x - bodies[otherIndex].x;
 					double dy2 = bodies[iIndex].y - bodies[otherIndex].y;
@@ -67,27 +56,12 @@ public class NBodyAdvanceFj extends RecursiveAction{
 					double distance2 = Math.sqrt(dSquared2);
 					double mag2 = dt / (dSquared2 * distance2);
 
-
-
 					otherBodyAarr[otherIndex][0] += dx2 * bodies[iIndex].mass * mag2;
 					otherBodyAarr[otherIndex][1] += dy2 * bodies[iIndex].mass * mag2;
 					otherBodyAarr[otherIndex][2] += dz2 * bodies[iIndex].mass * mag2;
 
-
-					/*synchronized (otherBody){
-						otherBody.vx += dx * iBody.mass * mag;
-						otherBody.vy += dy * iBody.mass * mag;
-						otherBody.vz += dz * iBody.mass * mag;
-					}*/
 					iIndex++;
-					/*if(j < 0) {
-						System.out.println(j + " : " + curr);
-					}*/
-
 				}
-
-
-
 			}
 		} else {
 			int iteration = endIndex - startIndex;
