@@ -30,7 +30,7 @@ public class NBodyAdvanceFj extends RecursiveAction{
 		if (ForkJoinTask.getSurplusQueuedTaskCount() > SURPLUS_THRESHOLD || endIndex - startIndex <= 8) {
 			for (int j = startIndex; j < endIndex; ++j) {
 				NBody iBody = bodies[j];
-				int iIndex = 0;
+				int iNewIndex = 0;
 				for (int k = j + 1; k < bodies.length; ++k) {
 					final NBody otherBody = bodies[k];
 					double dx = iBody.x - otherBody.x;
@@ -48,19 +48,19 @@ public class NBodyAdvanceFj extends RecursiveAction{
 					//----------------------
 
 					int otherIndex = bodies.length-1-j;
-					double dx2 = bodies[iIndex].x - bodies[otherIndex].x;
-					double dy2 = bodies[iIndex].y - bodies[otherIndex].y;
-					double dz2 = bodies[iIndex].z - bodies[otherIndex].z;
+					double dx2 = bodies[iNewIndex].x - bodies[otherIndex].x;
+					double dy2 = bodies[iNewIndex].y - bodies[otherIndex].y;
+					double dz2 = bodies[iNewIndex].z - bodies[otherIndex].z;
 
 					double dSquared2 = dx2 * dx2 + dy2 * dy2 + dz2 * dz2;
 					double distance2 = Math.sqrt(dSquared2);
 					double mag2 = dt / (dSquared2 * distance2);
 
-					otherBodyAarr[otherIndex][0] += dx2 * bodies[iIndex].mass * mag2;
-					otherBodyAarr[otherIndex][1] += dy2 * bodies[iIndex].mass * mag2;
-					otherBodyAarr[otherIndex][2] += dz2 * bodies[iIndex].mass * mag2;
+					otherBodyAarr[otherIndex][0] += dx2 * bodies[iNewIndex].mass * mag2;
+					otherBodyAarr[otherIndex][1] += dy2 * bodies[iNewIndex].mass * mag2;
+					otherBodyAarr[otherIndex][2] += dz2 * bodies[iNewIndex].mass * mag2;
 
-					iIndex++;
+					iNewIndex++;
 				}
 			}
 		} else {

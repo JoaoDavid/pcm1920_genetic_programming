@@ -36,9 +36,9 @@ public class NBodySystem {
 	}
 
 	public void advance(double dt) {		
-		double[][] iBodyAarr = new double[bodies.length][3];
-		double[][] otherBodyAarr = new double[bodies.length][3];
-		NBodyAdvanceFj bodyAdvance = new NBodyAdvanceFj(bodies, 0, bodies.length, dt, iBodyAarr, otherBodyAarr);
+		double[][] iBodyMatrix = new double[bodies.length][3];
+		double[][] otherBodyArr = new double[bodies.length][3];
+		NBodyAdvanceFj bodyAdvance = new NBodyAdvanceFj(bodies, 0, bodies.length, dt, iBodyMatrix, otherBodyArr);
 		bodyAdvance.compute();
 		//pool.execute(bodyAdvance);
 		
@@ -46,12 +46,12 @@ public class NBodySystem {
 		//System.out.println(pool.toString());
 		//bodyAdvance.join();
 		for (int i = 0; i < bodies.length; i++) {
-			bodies[i].vx -= iBodyAarr[i][0];
-			bodies[i].vy -= iBodyAarr[i][1];
-			bodies[i].vz -= iBodyAarr[i][2];
-			bodies[i].vx += otherBodyAarr[i][0];
-			bodies[i].vy += otherBodyAarr[i][1];
-			bodies[i].vz += otherBodyAarr[i][2];
+			bodies[i].vx -= iBodyMatrix[i][0];
+			bodies[i].vy -= iBodyMatrix[i][1];
+			bodies[i].vz -= iBodyMatrix[i][2];
+			bodies[i].vx += otherBodyArr[i][0];
+			bodies[i].vy += otherBodyArr[i][1];
+			bodies[i].vz += otherBodyArr[i][2];
 			bodies[i].x += dt * bodies[i].vx;
 			bodies[i].y += dt * bodies[i].vy;
 			bodies[i].z += dt * bodies[i].vz;
